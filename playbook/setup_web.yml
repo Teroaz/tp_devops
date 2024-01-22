@@ -1,0 +1,50 @@
+---
+- name: Configuration du serveur web Apache pour AWS AMI
+  hosts: all
+  become: yes
+  tasks:
+    - name: Mise à jour des paquets
+      apt:
+        update_cache: yes
+
+    - name: Installation d'Apache
+      apt:
+        name: apache2
+        state: latest
+
+    - name: Changement du port d'écoute pour Apache
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: '^Listen '
+        line: Listen 8080
+      notify: redémarrage apache
+
+    - name: Configuration du VirtualHost pour écouter sur le port 8080
+      copy:
+        dest: /etc/apache2/sites-available/000-default.conf
+        content: |
+          <VirtualHost *:8080>
+              ServerAdmin webmaster@localhost
+              DocumentRoot /var/www/html
+              ErrorLog ${APACHE_LOG_DIR}/error.log
+              CustomLog ${APACHE_LOG_DIR}/access.log combined
+          </VirtualHost>
+      notify: redémarrage apache
+
+    - name: Suppression du site web par défaut
+      file:
+        path: /var/www/html
+        state: absent
+
+    - name: Clonage du site web depuis GitHub
+      git:
+        repo: 'https://github.com/cloudacademy/static-website-example'
+        dest: /var/www/html
+        clone: yes
+        update: yes
+
+  handlers:
+    - name: redémarrage apache
+      service:
+        name: apache2
+        state: restarted

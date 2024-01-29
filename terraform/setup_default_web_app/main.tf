@@ -26,8 +26,8 @@ resource "aws_security_group" "web_sg" {
 }
 
 resource "aws_instance" "web_instance" {
-  ami                    = "ami-0f292e438e2534879"  # Remplacez par l'ID de votre AMI
-  instance_type          = "t2.micro"               # Ou un autre type d'instance selon vos besoins
+  ami                    = "ami-0f292e438e2534879"  # Remplacer par l'ID souhaité 
+  instance_type          = "t2.micro"               
   vpc_security_group_ids = [aws_security_group.web_sg.id]
   key_name               = "vockey"
 

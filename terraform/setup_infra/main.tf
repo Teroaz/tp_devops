@@ -67,7 +67,7 @@ resource "aws_security_group" "nat_sg" {
 }
 
 resource "aws_instance" "nat_instance" {
-  ami                    = "ami-0c7217cdde317cfec"  # Remplacez par une AMI valide
+  ami                    = "ami-0c7217cdde317cfec"  # Remplacer par l'ID souhaité
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.public_1.id
   vpc_security_group_ids = [aws_security_group.nat_sg.id]
